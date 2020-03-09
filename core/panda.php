@@ -2,6 +2,8 @@
 
 namespace core;
 
+use core\lib\log;
+
 class panda
 {
     public static $classMap = array();
@@ -9,18 +11,20 @@ class panda
 
     static public function run()
     {
+        log::init();//启动日志类
         $route = new \core\lib\route();
         $model = new \core\lib\model();
-        $controllerClass = $route->controller;
+        $ctrlClass = $route->controller;
         $action = $route->action;
-        $controllerfile = APP . '/controller/' . $controllerClass . 'Controller.php';
-        $class = '\\' . MODULE . '\controller\\' . $controllerClass . 'Controller';
-        if (is_file($controllerfile)) {
-            include $controllerfile;
+        $ctrlFile = APP . '/controller/' . $ctrlClass . 'Controller.php';
+        $class = '\\' . MODULE . '\controller\\' . $ctrlClass . 'Controller';
+        if (is_file($ctrlFile)) {
+            include $ctrlFile;
             $controller = new $class;
             $controller->$action();
+            log::log('ctrl:' . $ctrlClass . ' action:' . $action);
         } else {
-            throw  new \Exception('找不到控制器' . $controllerClass);
+            throw  new \Exception('找不到控制器' . $ctrlClass);
         }
     }
 
@@ -49,10 +53,17 @@ class panda
 
     public function view($file)
     {
-        $file=APP.'/view/'.$file;
-        if(is_file($file)){
-            extract($this->assign);
-            include $file;
+        $file = APP . '/view/' . $file;
+        if (is_file($file)) {
+//            \Twig_Autoloader::register();
+
+            $loader = new \Twig_Loader_Filesystem(APP . '/view/');
+            $twig = new \Twig_Environment($loader, array(
+                'cache' => PANDA . '/log/twig',
+                'debug' => DEBUG
+            ));
+            $template = $twig->load($file);
+            $template->display($this->assign ? $this->assign : '');
         }
     }
 }

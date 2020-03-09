@@ -2,21 +2,24 @@
 
 namespace app\controller;
 
-use core\lib\model;
 use core\panda;
+use app\model\LinkModel;
 
 class indexController extends panda
 {
     public function index()
     {
-//        $model = new model();
-//        $sql = 'SELECT * FROM blog_link';
-//        $ret = $model->query($sql)->fetchAll();
+
+//        $model = new  LinkModel();
+//        $ret = $model->lists();
+//        dump($ret);
 
         $data = 'hello world';
         $title = '视图文件';
         $this->assign('data', $data);
         $this->assign('title', $title);
-        $this->view('index/index.php');
+        $this->view('index/index.html');
+
+//        d($ret);
     }
 }

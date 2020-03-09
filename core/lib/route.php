@@ -23,7 +23,7 @@ class route
                 $this->action = $patharr[1];
                 unset($patharr[1]);
             } else {
-                $this->action = 'index';
+                $this->action = conf::get('ACTION','route');
             }
             //url多余部分转换成get
             $count = count($patharr) + 2;
@@ -35,8 +35,8 @@ class route
                 $i += 2;
             }
         } else {
-            $this->controller = 'index';
-            $this->action = 'index';
+            $this->controller = conf::get('CTRL','route');
+            $this->action = conf::get('ACTION','route');
         }
     }
 }
